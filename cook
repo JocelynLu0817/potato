@@ -1,0 +1,67 @@
+#include<stdio.h>
+#define MAXVEXS 1005
+#define MAXARCS 5005
+struct edge{
+	int u,v,w;
+};
+typedef struct{
+	struct edge edges[MAXARCS];
+	int vexs,arcs;
+}Graph;
+Graph g;
+int father[MAXARCS];
+void sort(){
+	int t1,t2,t3;
+	for(int i = 0; i < g.arcs-1; i++)
+	{
+		for(int j = 0; j < g.arcs-i-1; j++)
+		{
+			if(g.edges[j].w > g.edges[j+1].w)
+			{
+				t1 = g.edges[j].w;
+				t2 = g.edges[j].u;
+				t3 = g.edges[j].v;
+				g.edges[j].w = g.edges[j+1].w;
+				g.edges[j].u = g.edges[j+1].u;
+				g.edges[j].v = g.edges[j+1].v;
+				g.edges[j+1].w = t1;
+				g.edges[j+1].u = t2;
+				g.edges[j+1].v = t3;
+			}
+		}
+	}
+}
+int find(int x){
+	return x==father[x]?x:find(father[x]);
+}
+
+int Kruskal(){
+	int sum = 0;
+	int i,j,k,a,b;
+	sort();
+	for(i = 1; i <= g.vexs; i++){
+		father[i] = i;
+	}
+	k = 1;
+	j = 0;
+	while(k<g.vexs){
+		a = find(g.edges[j].u);
+		b = find(g.edges[j].v);
+		if(a != b){
+			father[a]=b;
+			sum+=g.edges[j].w;
+			k++;
+		}
+		j++;
+	}
+	return sum;
+}
+int main(){
+	while(scanf("%d%d",&g.vexs,&g.arcs)!=EOF){
+		for(int i = 0; i < g.arcs; i++){
+			scanf("%d%d%d",&g.edges[i].u,&g.edges[i].v,&g.edges[i].w);
+		}
+		printf("%d\n",Kruskal());
+	}
+	return 0;
+}
